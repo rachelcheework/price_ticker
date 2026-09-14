@@ -1,11 +1,20 @@
-import Home from "./Home"
-function App() {
+import PriceTicker from "./PriceTicker";
+import { useEffect } from "react";
+import { connectPriceSockets, disconnectPriceSockets } from "./socketsManagement/socketManager";
 
-  return (
-    <>
-    <Home/>
-    </>
-  )
+function App() {
+  useEffect(() => {
+    connectPriceSockets();
+
+    return () => {
+      disconnectPriceSockets();
+    };
+  }, []);
+
+  return (<div>
+
+    <PriceTicker/>
+  </div>);
 }
 
 export default App
