@@ -3,6 +3,7 @@ import { queuePriceUpdate } from "../../helper/queuePriceUpdate";
 import { normalizeBinanceTicker } from "./binanceAdaptor";
 import { getReconnectDelay } from "../../socketsManagement/getReconnectDelay";
 import { usePriceStore } from "../../store/priceStore";
+import { BINANCE_SYMBOLS as SYMBOLS} from "./binanceSymbols";
 
 //socket -> shared reference
 let socket: WebSocket | null = null;
@@ -31,6 +32,18 @@ function scheduleReconnect() {
     }, delay);
 }
 
+function toBinanceSymbol(symbol: string) {
+    return symbol
+      .replace("/USD", "USDT")
+      .replace("/", "")
+      .toLowerCase();
+  }
+
+const binanceStreams = SYMBOLS.map(
+    (symbol) =>
+      `${toBinanceSymbol(symbol)}@bookTicker`
+  );
+
 export function connectBinanceSocket() {
     shouldReconnect = true;
     setConnectionStatus("Binance", "connecting");
@@ -54,19 +67,25 @@ export function connectBinanceSocket() {
         ws.send(
             JSON.stringify({
                 method: "SUBSCRIBE",
-                params: [
-                    "btcusdt@bookTicker",
-                    "ethusdt@bookTicker",
-                    "solusdt@bookTicker",
-                ],
+                params: binanceStreams,
                 id: 1,
             })
         );
     };
 
     ws.onmessage = (event) => {
-        setConnectionStatus("Binance", "connected");
-        console.log("Binance WebSocket connected");
+        const status =
+            usePriceStore.getState()
+                .connectionStatus.Binance;
+
+        if (status !== "connected") {
+            usePriceStore
+                .getState()
+                .setConnectionStatus(
+                    "Binance",
+                    "connected"
+                );
+        }
         const message = JSON.parse(event.data);
 
         // console.log("Incoming raw message:", message);

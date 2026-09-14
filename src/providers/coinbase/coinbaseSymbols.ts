@@ -1,5 +1,4 @@
-//to use in PriceTicker.tsx
-  export const symbols = [
+export const COINBASE_SYMBOLS = [
     "BTC/USD",
     "ETH/USD",
     "SOL/USD",
@@ -31,37 +30,29 @@
     "RENDER/USD",
     "GRT/USD",
     "LDO/USD",
-  
     "MKR/USD",
+  
     "COMP/USD",
     "SNX/USD",
     "CRV/USD",
     "SAND/USD",
     "MANA/USD",
     "AXS/USD",
-    "ENJ/USD",
     "CHZ/USD",
-    "GALA/USD",
-  
-    "PEPE/USD",
     "SHIB/USD",
     "BONK/USD",
-    "FLOKI/USD",
     "WIF/USD",
-    "TRX/USD",
-    "TON/USD",
-    "HBAR/USD",
-    "VET/USD",
-    "EOS/USD",
   
+    "HBAR/USD",
     "KAVA/USD",
     "RUNE/USD",
     "IMX/USD",
     "STX/USD",
     "QNT/USD",
     "ZEC/USD",
-    "DASH/USD",
     "XTZ/USD",
-    "EGLD/USD",
-    "THETA/USD",
-  ];
+    "JASMY/USD",
+    "LPT/USD",
+    "ENS/USD",
+    "MASK/USD",
+  ] as const;

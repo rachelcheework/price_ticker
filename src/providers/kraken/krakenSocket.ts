@@ -3,6 +3,7 @@ import { queuePriceUpdate } from "../../helper/queuePriceUpdate";
 import { normalizeKrakenTicker } from "./krakenAdaptor";
 import { getReconnectDelay } from "../../socketsManagement/getReconnectDelay";
 import { usePriceStore } from "../../store/priceStore";
+import { KRAKEN_SYMBOLS as SYMBOLS } from "./krakenSymbols";
 
 //socket -> shared reference
 let socket: WebSocket | null = null;
@@ -56,7 +57,7 @@ export function connectKrakenSocket() {
                 method: "subscribe",
                 params: {
                     channel: "ticker",
-                    symbol: ["BTC/USD", "ETH/USD", "SOL/USD"],
+                    symbol: SYMBOLS,
                     event_trigger: "bbo",
                 },
             })
@@ -64,8 +65,18 @@ export function connectKrakenSocket() {
     };
 
     ws.onmessage = (event) => {
-        setConnectionStatus("Kraken", "connected");
-        console.log("Kraken WebSocket connected");
+        const status =
+            usePriceStore.getState()
+                .connectionStatus.Binance;
+
+        if (status !== "connected") {
+            usePriceStore
+                .getState()
+                .setConnectionStatus(
+                    "Kraken",
+                    "connected"
+                );
+        }
         const message = JSON.parse(event.data);
 
         // console.log("Incoming raw message:", message);

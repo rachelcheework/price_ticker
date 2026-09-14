@@ -5,6 +5,7 @@ export function getBestQuotes(
   prices: Record<string, PriceQuote>,
   symbol: string
 ) {
+    
   const quotes = Object.values(prices).filter(
     (price) => price.symbol === symbol
   );

@@ -3,6 +3,7 @@ import { queuePriceUpdate } from "../../helper/queuePriceUpdate";
 import { normalizeCoinbaseTicker } from "./coinbaseAdaptor";
 import { getReconnectDelay } from "../../socketsManagement/getReconnectDelay";
 import { usePriceStore } from "../../store/priceStore";
+import { COINBASE_SYMBOLS as SYMBOLS } from "./coinbaseSymbols";
 
 //socket -> shared reference
 let socket: WebSocket | null = null;
@@ -13,23 +14,27 @@ let shouldReconnect = true;
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
 const setConnectionStatus =
-  usePriceStore.getState().setConnectionStatus;
+    usePriceStore.getState().setConnectionStatus;
 
 function scheduleReconnect() {
     if (reconnectTimer) return;
 
     const delay = getReconnectDelay(
-      reconnectAttempts,
-      MAX_RECONNECT_DELAY
+        reconnectAttempts,
+        MAX_RECONNECT_DELAY
     );
-  
+
     reconnectAttempts++;
-  
+
     reconnectTimer = setTimeout(() => {
-      reconnectTimer = null;
-      connectCoinbaseSocket();
+        reconnectTimer = null;
+        connectCoinbaseSocket();
     }, delay);
-  }
+}
+
+const coinbaseSymbols = SYMBOLS.map((symbol) =>
+    symbol.replace("/", "-")
+);
 
 export function connectCoinbaseSocket() {
     shouldReconnect = true;
@@ -41,10 +46,10 @@ export function connectCoinbaseSocket() {
     ) {
         return;
     }
-    
+
 
     const ws = new WebSocket(COINBASE_SOCKET_URL);
-    
+
 
     socket = ws;
 
@@ -58,7 +63,7 @@ export function connectCoinbaseSocket() {
 
                     {
                         "name": "ticker",
-                        "product_ids": ["BTC-USD", "ETH-USD"]
+                        "product_ids": coinbaseSymbols
                     }
                 ]
             })
@@ -66,8 +71,18 @@ export function connectCoinbaseSocket() {
     };
 
     ws.onmessage = (event) => {
-        setConnectionStatus("Coinbase", "connected");
-        console.log("Coinbase WebSocket connected");
+        const status =
+            usePriceStore.getState()
+                .connectionStatus.Binance;
+
+        if (status !== "connected") {
+            usePriceStore
+                .getState()
+                .setConnectionStatus(
+                    "Coinbase",
+                    "connected"
+                );
+        }
         const message = JSON.parse(event.data);
 
         // console.log("Incoming raw message:", message);
@@ -97,7 +112,7 @@ export function connectCoinbaseSocket() {
         }
         if (shouldReconnect) {
             scheduleReconnect();
-          }
+        }
     };
 
     return socket;
@@ -107,10 +122,10 @@ export function disconnectCoinbaseSocket() {
     shouldReconnect = false; //dont reconnect if you intentionally close
     setConnectionStatus("Coinbase", "disconnected");
 
-  if (reconnectTimer) {
-    clearTimeout(reconnectTimer);
-    reconnectTimer = null;
-  }
+    if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+    }
     const ws = socket;
 
     if (!ws) return;

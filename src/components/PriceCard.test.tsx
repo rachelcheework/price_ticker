@@ -61,10 +61,10 @@ describe("PriceCard", () => {
         expect(screen.getByText("BTC/USD")).toBeInTheDocument();
 
         expect(screen.getByTestId("best-bid"))
-            .toHaveTextContent("60,050.00");
+            .toHaveTextContent("60,050");
 
         expect(screen.getByTestId("best-ask"))
-            .toHaveTextContent("60,080.00");
+            .toHaveTextContent("60,080");
     });
 });
 describe("PriceCard trade confirmation", () => {
@@ -153,7 +153,38 @@ describe("PriceCard trade confirmation", () => {
       screen.queryByText(/confirm simulated trade/i)
     ).not.toBeInTheDocument();
   });
-});
+
+  it("resets the pending trade after Cancel", async () => {
+    const user = userEvent.setup();
+  
+    render(<PriceCard symbol="BTC/USD" />);
+  
+    await user.click(
+      screen.getByRole("button", { name: /buy/i })
+    );
+  
+    expect(
+      screen.getByText(/confirm simulated trade/i)
+    ).toBeInTheDocument();
+  
+    await user.click(
+      screen.getByRole("button", { name: /cancel/i })
+    );
+  
+    expect(
+      screen.queryByText(/confirm simulated trade/i)
+    ).not.toBeInTheDocument();
+  
+    // Open it again to prove state was cleared properly
+    await user.click(
+      screen.getByRole("button", { name: /buy/i })
+    );
+  
+    expect(screen.getByTestId("trade-amount"))
+    .toHaveValue(null);
+  });
+
+ });
 
 
 

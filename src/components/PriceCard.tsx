@@ -16,6 +16,7 @@ type PendingTrade = {
 
 export const PriceCard = ({ symbol }: PriceCardProps) => {
     const prices = usePriceStore((state) => state.prices);
+    const [tradeAmount, setTradeAmount] = useState("");
 
     //state for confirmation modal
     const [pendingTrade, setPendingTrade] =
@@ -26,7 +27,6 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
 
     const [tradeError, setTradeError] =
         useState<string | null>(null);
-
 
     const [isExecutingTrade, setIsExecutingTrade] =
         useState(false);
@@ -63,6 +63,14 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
         setSuccessMessage(null);
         setIsExecutingTrade(true);
 
+
+        const amount = Number(tradeAmount);
+
+        if (!Number.isFinite(amount) || amount <= 0) {
+            setTradeError("Please enter a valid trade amount.");
+            return;
+        }
+
         const providerStatus =
             usePriceStore.getState().connectionStatus[pendingTrade!.provider];
 
@@ -75,13 +83,14 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
             return;
         }
 
-        console.log("Simulated trade:", pendingTrade);
+        console.log("Simulated trade:", { ...pendingTrade, amount });
 
         setSuccessMessage(
-            `${pendingTrade!.side} ${pendingTrade!.symbol} executed at ${pendingTrade!.price}`
+            `${pendingTrade!.side} ${amount} ${pendingTrade!.symbol} executed at ${pendingTrade!.price}`
         );
 
         setPendingTrade(null);
+        setTradeAmount("");
         setIsExecutingTrade(false);
 
         setTimeout(() => {
@@ -89,8 +98,27 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
         }, 2000);
     };
 
+    const handleCancel = () => {
+        setPendingTrade(null);
+        setTradeAmount("");
+        setIsExecutingTrade(false);
+        setTradeError("")
+    }
+
     if (!bestBid || !bestAsk) {
-        return <div>Loading prices...</div>;
+        return (
+            <div className="flex flex-col min-h-58.75 rounded-xl bg-white/15 border border-white/20 p-5 text-white shadow-md shadow-gray-300/50">
+              <h2 className="mb-4 text-lg font-semibold">
+                {symbol}
+              </h2>
+        
+              <div className="flex flex-1 items-center justify-center">
+                <span className="text-sm text-gray-400">
+                  No quote available
+                </span>
+              </div>
+            </div>
+          );
     }
 
     //for bid/ask/spread/confirmation modal
@@ -129,6 +157,10 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
                             <span className="text-3xl font-bold">
                                 {highlightedPrices.price1.significant}
                             </span>
+
+                            <span className="text-lg text-gray-400">
+                                {highlightedPrices.price1.remainder}
+                            </span>
                         </p>
 
                         <p className="mt-1 text-sm text-gray-500">
@@ -157,6 +189,10 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
                             <span className="text-3xl font-bold">
                                 {highlightedPrices.price2.significant}
                             </span>
+
+                            <span className="text-lg text-gray-400">
+                                {highlightedPrices.price2.remainder}
+                            </span>
                         </p>
                         <p className="mt-1 text-sm text-gray-500">
                             {bestAsk.provider}
@@ -176,14 +212,14 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
                         </span>
 
                         <span className="font-medium tabular-nums">
-                            {spread.toFixed(2)}
+                            {spread.toFixed(5)}
                         </span>
                     </div>
                 </div>
 
                 {/* Success message */}
                 {successMessage && (
-                    <div className="mt-4 rounded-lg bg-green-50 p-3 text-sm text-green-700">
+                    <div data-testid="trade-success" className="mt-4 rounded-lg bg-green-50 p-3 text-sm text-green-700 wrap-break-word">
                         ✓ {successMessage}
                     </div>
                 )}
@@ -234,7 +270,7 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
                             </div>
 
                             <div className="flex justify-between">
-                                <span  className="text-gray-500">
+                                <span className="text-gray-500">
                                     Provider
                                 </span>
 
@@ -242,20 +278,56 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
                                     {pendingTrade.provider}
                                 </span>
                             </div>
+
+                            <div className="flex justify-between items-center">
+                                <span className="w-1/3 text-gray-500">
+                                    Amount
+                                </span>
+
+                                <input
+                                    id="trade-amount"
+                                    data-testid="trade-amount"
+                                    type="number"
+                                    min="0"
+                                    step="any"
+                                    value={tradeAmount}
+                                    onChange={(e) => setTradeAmount(e.target.value)}
+                                    placeholder="Enter amount"
+                                    className="w-1/2 rounded-lg py-2 text-right tabular-nums bg-black/10 focus:outline-none focus:ring-1 focus:ring-black/50"
+                                />
+                            </div>
+
+                            <div className="flex justify-between">
+                                <span className="w-1/3 text-gray-500">
+                                    Estimated Value
+                                </span>
+                                <span className="w-2/3 truncate text-right font-semibold tabular-nums">
+                                    {(
+                                        (Number(tradeAmount) || 0) * pendingTrade.price
+                                    ).toLocaleString()}
+                                </span>
+
+                            </div>
+
+                            {tradeError && (
+                                <p className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-500">
+                                    {tradeError}
+                                </p>
+                            )}
                         </div>
 
                         {/* Buttons */}
                         <div className="mt-6 flex gap-3">
                             <button
-                                onClick={() => setPendingTrade(null)}
-                                className="flex-1 rounded-lg border px-4 py-2 hover:bg-black/20"
+                                onClick={handleCancel}
+                                className="flex-1 rounded-lg border px-4 py-2 hover:bg-black/20 cursor-pointer"
                             >
                                 Cancel
                             </button>
 
                             <button
                                 onClick={handleConfirmTrade}
-                                className="flex-1 rounded-lg bg-black px-4 py-2 text-white hover:bg-black/80"
+                                className="flex-1 rounded-lg bg-black px-4 py-2 text-white hover:bg-black/80 cursor-pointer"
                             >
                                 Confirm
                             </button>

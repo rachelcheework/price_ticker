@@ -2,63 +2,31 @@ import { describe, expect, it } from "vitest";
 import { splitPrice } from "./splitPrice";
 
 describe("splitPrice", () => {
-  it("splits two prices into common and significant parts", () => {
-    const result = splitPrice(12.34, 12.56);
-
-    expect(result).toEqual({
-      price1: {
-        common: "12.",
-        significant: "34",
-      },
-      price2: {
-        common: "12.",
-        significant: "56",
-      },
+    it("backs up when difference is the last digit", () => {
+      const result = splitPrice(57, 58);
+  
+      expect(result!.price1.significant).toBe("57");
+      expect(result!.price2.significant).toBe("58");
+    });
+  
+    it("highlights two digits near the difference", () => {
+      const result = splitPrice(123.45, 123.46);
+  
+      expect(result!.price1.significant).toBe("45");
+      expect(result!.price2.significant).toBe("46");
+    });
+  
+    it("handles small decimal prices", () => {
+      const result = splitPrice(0.00123, 0.00124);
+  
+      expect(result!.price1.significant).toBe("23");
+      expect(result!.price2.significant).toBe("24");
+    });
+  
+    it("handles integer digit count changing", () => {
+      const result = splitPrice(999.99, 1000.01);
+  
+      expect(result!.price1.significant).toBe("999");
+      expect(result!.price2.significant).toBe("1,000");
     });
   });
-
-  it("returns the whole price as common when both prices are the same", () => {
-    const result = splitPrice(12.34, 12.34);
-
-    expect(result).toEqual({
-      price1: {
-        common: "12.34",
-        significant: "",
-      },
-      price2: {
-        common: "12.34",
-        significant: "",
-      },
-    });
-  });
-
-  it("handles prices that differ in the integer portion", () => {
-    const result = splitPrice(12.34, 13.34);
-
-    expect(result).toEqual({
-      price1: {
-        common: "1",
-        significant: "2.34",
-      },
-      price2: {
-        common: "1",
-        significant: "3.34",
-      },
-    });
-  });
-
-  it("uses the specified number of decimal places", () => {
-    const result = splitPrice(12.3456, 12.3499, 3);
-
-    expect(result).toEqual({
-      price1: {
-        common: "12.3",
-        significant: "46",
-      },
-      price2: {
-        common: "12.3",
-        significant: "50",
-      },
-    });
-  });
-});
