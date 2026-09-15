@@ -141,24 +141,24 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
                     {/* BID */}
                     <button
                         onClick={handleBidClick}
-                        className="rounded-lg border p-4 text-left transition cursor-pointer bg-white/90 text-gray-950 hover:bg-white"
+                        className="rounded-lg p-4 text-left transition cursor-pointer bg-[#DD534B] text-gray-950 hover:outline-2 hover:outline-white"
                     >
-                        <p className="mb-1 text-xs font-medium text-gray-500">
+                        <p className="mb-1 text-xs font-medium text-gray-950">
                             BID
                         </p>
 
                         <p data-testid="best-bid" className="tabular-nums">
 
-                            <span className="text-2xl font-bold">
+                            <span className="text-white text-2xl font-bold">
                                 {formatCryptoPrice(bestBid.bid)}
                             </span>
                         </p>
 
-                        <p className="mt-1 text-sm text-gray-500">
+                        <p className="mt-1 text-sm font-bold text-white">
                             {bestBid.provider}
                         </p>
 
-                        <p className="mt-2 text-xs text-gray-400">
+                        <p className="mt-2 text-xs text-gray-950">
                             Sell
                         </p>
                     </button>
@@ -166,24 +166,24 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
                     {/* ASK */}
                     <button
                         onClick={handleAskClick}
-                        className="rounded-lg border p-4 text-left transition cursor-pointer bg-white/90 text-gray-950 hover:bg-white"
+                        className="rounded-lg border p-4 text-left transition cursor-pointer bg-[#4D72E4] text-gray-950 hover:outline-2 hover:outline-white"
                     >
-                        <p className="mb-1 text-xs font-medium text-gray-500">
+                        <p className="mb-1 text-xs font-medium text-gray-950">
                             ASK
                         </p>
 
                         <p data-testid="best-ask" className="tabular-nums">
 
-                            <span className="text-2xl font-bold">
+                            <span className="text-2xl text-white font-bold">
                                 {formatCryptoPrice(bestAsk.ask)}
                             </span>
 
                         </p>
-                        <p className="mt-1 text-sm text-gray-500">
+                        <p className="mt-1 text-sm font-bold text-white">
                             {bestAsk.provider}
                         </p>
 
-                        <p className="mt-2 text-xs text-gray-400">
+                        <p className="mt-2 text-xs text-gray-950">
                             Buy
                         </p>
                     </button>
