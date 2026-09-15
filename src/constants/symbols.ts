@@ -32,14 +32,12 @@
     "GRT/USD",
     "LDO/USD",
   
-    "MKR/USD",
     "COMP/USD",
     "SNX/USD",
     "CRV/USD",
     "SAND/USD",
     "MANA/USD",
     "AXS/USD",
-    "ENJ/USD",
     "CHZ/USD",
     "GALA/USD",
   
@@ -49,10 +47,8 @@
     "FLOKI/USD",
     "WIF/USD",
     "TRX/USD",
-    "TON/USD",
     "HBAR/USD",
     "VET/USD",
-    "EOS/USD",
   
     "KAVA/USD",
     "RUNE/USD",
@@ -64,4 +60,5 @@
     "XTZ/USD",
     "EGLD/USD",
     "THETA/USD",
+
   ];

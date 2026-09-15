@@ -166,7 +166,7 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
                     {/* ASK */}
                     <button
                         onClick={handleAskClick}
-                        className="rounded-lg border p-4 text-left transition cursor-pointer bg-[#4D72E4] text-gray-950 hover:outline-2 hover:outline-white"
+                        className="rounded-lg p-4 text-left transition cursor-pointer bg-[#4D72E4] hover:outline-2 hover:outline-white"
                     >
                         <p className="mb-1 text-xs font-medium text-gray-950">
                             ASK
