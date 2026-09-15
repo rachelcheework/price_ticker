@@ -122,7 +122,10 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
     }
 
     //for bid/ask/spread/confirmation modal
-    const spread = bestAsk.ask - bestBid.bid;
+    const spread =
+    bestBid && bestAsk
+      ? bestAsk.ask - bestBid.bid
+      : null;
 
     return (
         <>
@@ -194,7 +197,7 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
                         </span>
 
                         <span className="font-medium tabular-nums">
-                            {formatSpread(spread)}
+                            {formatSpread(spread!)}
                         </span>
                     </div>
                 </div>

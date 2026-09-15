@@ -67,7 +67,7 @@ export function connectKrakenSocket() {
     ws.onmessage = (event) => {
         const status =
             usePriceStore.getState()
-                .connectionStatus.Binance;
+                .connectionStatus.Kraken;
 
         if (status !== "connected") {
             usePriceStore

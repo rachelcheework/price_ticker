@@ -73,7 +73,7 @@ export function connectCoinbaseSocket() {
     ws.onmessage = (event) => {
         const status =
             usePriceStore.getState()
-                .connectionStatus.Binance;
+                .connectionStatus.Coinbase;
 
         if (status !== "connected") {
             usePriceStore
