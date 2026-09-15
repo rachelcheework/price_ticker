@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { usePriceStore } from "../store/priceStore";
 import { getBestQuotes } from "../helper/getBestQuotes";
-import { splitPrice } from "../helper/splitPrice";
+import { formatCryptoPrice, formatSpread } from "../helper/formatCryptoPrice";
 
 type PriceCardProps = {
     symbol: string;
@@ -108,26 +108,21 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
     if (!bestBid || !bestAsk) {
         return (
             <div className="flex flex-col min-h-58.75 rounded-xl bg-white/15 border border-white/20 p-5 text-white shadow-md shadow-gray-300/50">
-              <h2 className="mb-4 text-lg font-semibold">
-                {symbol}
-              </h2>
-        
-              <div className="flex flex-1 items-center justify-center">
-                <span className="text-sm text-gray-400">
-                  No quote available
-                </span>
-              </div>
+                <h2 className="mb-4 text-lg font-semibold">
+                    {symbol}
+                </h2>
+
+                <div className="flex flex-1 items-center justify-center">
+                    <span className="text-sm text-gray-400">
+                        No quote available
+                    </span>
+                </div>
             </div>
-          );
+        );
     }
 
     //for bid/ask/spread/confirmation modal
     const spread = bestAsk.ask - bestBid.bid;
-
-    const highlightedPrices = splitPrice(
-        bestBid!.bid,
-        bestAsk!.ask
-    );
 
     return (
         <>
@@ -150,16 +145,9 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
                         </p>
 
                         <p data-testid="best-bid" className="tabular-nums">
-                            <span className="text-lg text-gray-400">
-                                {highlightedPrices.price1.common}
-                            </span>
 
                             <span className="text-3xl font-bold">
-                                {highlightedPrices.price1.significant}
-                            </span>
-
-                            <span className="text-lg text-gray-400">
-                                {highlightedPrices.price1.remainder}
+                                {formatCryptoPrice(bestAsk.bid)}
                             </span>
                         </p>
 
@@ -182,17 +170,11 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
                         </p>
 
                         <p data-testid="best-ask" className="tabular-nums">
-                            <span className="text-lg text-gray-400">
-                                {highlightedPrices.price2.common}
-                            </span>
 
                             <span className="text-3xl font-bold">
-                                {highlightedPrices.price2.significant}
+                                {formatCryptoPrice(bestAsk.ask)}
                             </span>
 
-                            <span className="text-lg text-gray-400">
-                                {highlightedPrices.price2.remainder}
-                            </span>
                         </p>
                         <p className="mt-1 text-sm text-gray-500">
                             {bestAsk.provider}
@@ -212,7 +194,7 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
                         </span>
 
                         <span className="font-medium tabular-nums">
-                            {spread.toFixed(5)}
+                            {formatSpread(spread)}
                         </span>
                     </div>
                 </div>
