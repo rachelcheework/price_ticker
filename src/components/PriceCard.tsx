@@ -146,7 +146,7 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
 
                         <p data-testid="best-bid" className="tabular-nums">
 
-                            <span className="text-3xl font-bold">
+                            <span className="text-2xl font-bold">
                                 {formatCryptoPrice(bestAsk.bid)}
                             </span>
                         </p>
