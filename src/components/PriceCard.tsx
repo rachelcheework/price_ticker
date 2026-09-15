@@ -188,7 +188,7 @@ export const PriceCard = ({ symbol }: PriceCardProps) => {
 
                 {/* Spread */}
                 <div className="mt-4 border-t pt-3">
-                    <div className="flex justify-center text-sm">
+                    <div className="flex justify-center text-sm gap-2">
                         <span className="text-gray-300">
                             Spread
                         </span>
